@@ -48,6 +48,17 @@ common_ports = {
 #You can add some to if you want to scan more ports
 listing_ports = [21, 22, 23, 25, 80, 109, 110, 156, 443, 3306]
 
+#function to print out the usage
+def printUsage():
+    # print out how to use the programe
+    print ("""
+    You must supply a domain name
+          Usage:
+             python filename topleveldomainname
+             eg.
+               python port_scanner.py google.com
+         """)
+
 #initial information to display to the user
 def initializing():
     #print out some information
@@ -60,7 +71,11 @@ initializing()
 
 #request the user to enter domain name
 #host    = input("[*] Enter a Remote Host to scan: ")
-host = sys.argv[1]
+try:
+    host = sys.argv[1]
+except:
+    printUsage()
+    sys.exit(1)
 
 #get the top level domain name
 host = get_tld(host)
@@ -86,7 +101,6 @@ def port_opened(port):
         # returns the service name if available
         print("<tr style='color:green'><td width='10%'>[*]</td><td width='20%'>", port, "</td><td width='40%'>", common_ports[port] ,"</td><td width='30%'>Port is Opened</td></tr>")
 
-#if the port is closed then run this script
 def port_closed(port):
     # converts the int to string
     port = str(port)
@@ -114,9 +128,7 @@ try:
         sock.settimeout(5)
         
 	#fetch the connection results
-        #check the port connection to
         result = sock.connect_ex((ipaddress, port))
-        #the result is 0 if the port is opened
         if result == 0:
             #call the port name function
             port_opened(port)
